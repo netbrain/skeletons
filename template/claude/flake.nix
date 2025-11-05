@@ -23,6 +23,11 @@
           ];
 
           shellHook = ''
+            # Fix execute permissions on scripts (Nix templates don't preserve +x)
+            if [ -d .claude ]; then
+              find .claude -name "*.sh" -type f -exec chmod +x {} \; 2>/dev/null
+            fi
+
             echo "🤖 Claude Code environment loaded"
             echo ""
             echo "Available skills:"
