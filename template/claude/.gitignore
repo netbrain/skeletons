@@ -1,0 +1,17 @@
+# Direnv
+.direnv/
+
+# Nix
+result
+result-*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~

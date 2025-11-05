@@ -1,0 +1,18 @@
+# Direnv
+.direnv/
+
+# Nix result symlinks
+result
+result-*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+/.claude
