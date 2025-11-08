@@ -8,7 +8,6 @@ input=$(cat)
 
 # Parse JSON input (for hook input format)
 prompt=$(echo "$input" | grep -oP '"prompt"\s*:\s*"\K[^"]+' 2>/dev/null || echo "")
-prompt=$(echo "$prompt" | tr '[:upper:]' '[:lower:]')
 
 if [[ -z "$prompt" ]]; then
     exit 0
@@ -19,6 +18,19 @@ project_dir="${CLAUDE_PROJECT_DIR}"
 if [[ -z "$project_dir" ]]; then
     project_dir=$(echo "$input" | grep -oP '"cwd"\s*:\s*"\K[^"]+' 2>/dev/null || pwd)
 fi
+
+# Check if intent-classifier is available on PATH
+if command -v intent-classifier &> /dev/null; then
+    # Use semantic intent classifier
+    intent-classifier \
+        --agents-dir "$project_dir/.claude/agents" \
+        --skills-dir "$project_dir/.claude/skills" \
+        --query "$prompt"
+    exit 0
+fi
+
+# Fallback to keyword/regex matching
+prompt=$(echo "$prompt" | tr '[:upper:]' '[:lower:]')
 
 # Arrays to hold matched skills by priority
 declare -a critical_skills=()
