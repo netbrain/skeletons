@@ -63,14 +63,11 @@
               find .claude -name "*.sh" -type f -exec chmod +x {} \; 2>/dev/null
             fi
 
-            echo "🤖 Claude Code environment loaded"
+            echo "🤖 Claude Code environment with intelligent skills & agents"
             echo ""
-            echo "Available skills:"
-            echo "  • project-init: Initialize project structure for your stack"
-            echo "  • skill-creator: Create custom skills"
-            echo "  • agent-creator: Create AI agents"
+            echo "Get started:"
+            echo "  claude \"help me set up this project with skills and agents\""
             echo ""
-            echo "Ready to start building!"
           '';
         };
       });
