@@ -23,9 +23,8 @@ fi
 if command -v intent-classifier &> /dev/null; then
     # Use semantic intent classifier
     intent-classifier \
-        --agents-dir "$project_dir/.claude/agents" \
-        --skills-dir "$project_dir/.claude/skills" \
-        --query "$prompt"
+        --prompt "$prompt" \
+        --embed "$project_dir/.claude"
     exit 0
 fi
 

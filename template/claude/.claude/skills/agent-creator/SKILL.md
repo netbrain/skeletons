@@ -24,6 +24,10 @@ name: agent-name
 description: Brief description of what this agent does and when to use it
 model: sonnet
 color: blue
+enforcement: suggest,require
+priority: critical,high,medium,low
+keywords: word1, word2
+patterns: regex1, regex2
 ---
 
 System prompt defining the agent's personality, role, and approach.
@@ -36,7 +40,11 @@ System prompt defining the agent's personality, role, and approach.
 - **name**: Lowercase letters and hyphens only (e.g., `code-reviewer`, `test-runner`)
 - **description**: Explains what the agent does and when Claude should use it
 - **model**: `sonnet`, `opus`, `haiku`, or `inherit`
-- **color**: Visual identifier - `blue`, `green`, `red`, `yellow`, `purple`, `orange`, `pink`, `gray`
+- **color**: Visual identifier - `cyan`, `blue`, `green`, `red`, `yellow`, `purple`, `orange`, `pink`, `gray`
+- **enforcement**: How strongly to recommend - `suggest` (recommend) or `require` (enforce)
+- **priority**: Activation priority - `critical` (required), `high` (recommended), `medium` (suggested, default), `low` (optional)
+- **keywords**: Comma-separated keywords for fallback keyword matching (e.g., `test, testing, pytest`)
+- **patterns**: Comma-separated regex patterns for fallback pattern matching (e.g., `run.*test, test.*suite`)
 
 ### Optional Fields
 
@@ -113,6 +121,8 @@ Agents should have personality to make interactions feel natural. Consider:
 ## Agent Templates
 
 ### Orchestrator (Required for Every Project)
+
+This should be defined in CLAUDE.md at project level to always invoke the orchestrator for all input
 
 **Always create an orchestrator first.** Customize name/personality to user preference.
 

@@ -29,12 +29,20 @@
 
           buildInputs = [ pkgs.libffi ];
 
+          nativeBuildInputs = [ pkgs.makeWrapper ];
+
+          # Skip tests during build (tests require writable home directory for cache)
+          doCheck = false;
+
+          # Set LD_LIBRARY_PATH during build
+          preBuild = ''
+            export LD_LIBRARY_PATH=${pkgs.lib.makeLibraryPath [ pkgs.libffi pkgs.stdenv.cc.cc.lib ]}
+          '';
+
           postInstall = ''
             wrapProgram $out/bin/intent-classifier \
               --prefix LD_LIBRARY_PATH : ${pkgs.lib.makeLibraryPath [ pkgs.libffi pkgs.stdenv.cc.cc.lib ]}
           '';
-
-          nativeBuildInputs = [ pkgs.makeWrapper ];
         };
       in
       {
