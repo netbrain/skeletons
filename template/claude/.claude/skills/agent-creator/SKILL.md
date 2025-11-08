@@ -74,7 +74,29 @@ Project agents override user agents when names conflict.
 
 ## Creating Agents
 
-### Process
+### Using the Init Script (Recommended)
+
+Run the init script to create an agent with complete frontmatter template:
+
+```bash
+.claude/skills/agent-creator/scripts/init_agent.sh <agent-name> --path <path>
+```
+
+Examples:
+```bash
+# Create project agent
+.claude/skills/agent-creator/scripts/init_agent.sh code-reviewer --path .claude/agents
+
+# Create user-wide agent
+.claude/skills/agent-creator/scripts/init_agent.sh orchestrator --path ~/.claude/agents
+```
+
+The script creates a properly formatted agent file with:
+- Complete YAML frontmatter with all required fields
+- System prompt template with sections to fill in
+- TODO reminders for customization
+
+### Manual Process
 
 1. Create file: `.claude/agents/<agent-name>.md`
 2. Add YAML frontmatter with required fields

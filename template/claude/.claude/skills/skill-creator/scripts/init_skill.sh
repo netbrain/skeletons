@@ -45,6 +45,11 @@ init_skill() {
 ---
 name: $skill_name
 description: [TODO: Complete and informative explanation of what the skill does and when to use it. Include WHEN to use this skill - specific scenarios, file types, or tasks that trigger it.]
+type: domain
+enforcement: suggest
+priority: medium
+keywords: [TODO: Add comma-separated keywords for fallback matching, e.g., api, integration, database]
+patterns: [TODO: Add comma-separated regex patterns for fallback matching, e.g., create.*api, setup.*database]
 ---
 
 # $skill_title
