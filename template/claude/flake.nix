@@ -26,6 +26,15 @@
           sourceRoot = "source/utils/intent-classifier";
 
           vendorHash = "sha256-Ks1NEdhqgDRUgN9t3rAv71EmZtxHqUnXP+V+ewRBvoU=";
+
+          buildInputs = [ pkgs.libffi ];
+
+          postInstall = ''
+            wrapProgram $out/bin/intent-classifier \
+              --prefix LD_LIBRARY_PATH : ${pkgs.lib.makeLibraryPath [ pkgs.libffi pkgs.stdenv.cc.cc.lib ]}
+          '';
+
+          nativeBuildInputs = [ pkgs.makeWrapper ];
         };
       in
       {
