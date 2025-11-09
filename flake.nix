@@ -54,6 +54,9 @@
 
           nativeBuildInputs = [ pkgs.makeWrapper ];
 
+          # Inject version at build time to bust Nix cache
+          ldflags = [ "-X main.version=${version}" ];
+
           doCheck = false;
 
           preBuild = ''
