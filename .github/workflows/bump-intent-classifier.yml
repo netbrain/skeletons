@@ -8,6 +8,9 @@ on:
       - 'utils/intent-classifier/**'
       - '!utils/intent-classifier/README.md'
 
+permissions:
+  contents: write
+
 jobs:
   bump-version:
     runs-on: ubuntu-latest
