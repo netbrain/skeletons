@@ -56,8 +56,12 @@
 
           nativeBuildInputs = [ pkgs.makeWrapper ];
 
-          # Inject version at build time to bust Nix cache
-          ldflags = [ "-X main.version=${intentClassifierVersion}" ];
+          # Strip debug symbols and inject version to bust Nix cache
+          ldflags = [
+            "-s"
+            "-w"
+            "-X main.version=${intentClassifierVersion}"
+          ];
 
           doCheck = false;
 

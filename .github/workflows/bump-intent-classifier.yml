@@ -55,6 +55,9 @@ jobs:
           # Update flake.nix
           sed -i "s/intentClassifierVersion = \"$current\"/intentClassifierVersion = \"$new_version\"/" flake.nix
 
+          # Update version in Go source (CRITICAL: changes source hash, busts Nix cache)
+          sed -i "s/var version = \".*\"/var version = \"$new_version\"/" utils/intent-classifier/main.go
+
           # Configure git
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"

@@ -19,6 +19,9 @@ import (
 	"github.com/hybridgroup/yzma/pkg/llama"
 )
 
+// Version is injected at build time via ldflags
+var version = "dev"
+
 // Item represents a file with its content for matching
 type Item struct {
 	Name     string
