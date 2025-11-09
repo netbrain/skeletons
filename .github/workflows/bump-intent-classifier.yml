@@ -1,0 +1,62 @@
+name: Bump intent-classifier version
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'utils/intent-classifier/**'
+      - '!utils/intent-classifier/README.md'
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 2
+
+      - name: Check if version bump needed
+        id: check
+        run: |
+          # Check if this commit already bumped the version
+          if git log -1 --pretty=%B | grep -q "Bump intent-classifier version"; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Check if flake.nix was modified in this push
+          if git diff --name-only HEAD~1 HEAD | grep -q "^flake.nix$"; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "skip=false" >> $GITHUB_OUTPUT
+
+      - name: Bump version
+        if: steps.check.outputs.skip == 'false'
+        run: |
+          # Extract current version
+          current=$(grep -oP 'version = "\K[0-9.]+' flake.nix | head -1)
+          echo "Current version: $current"
+
+          # Parse version (assuming semantic versioning)
+          IFS='.' read -r major minor patch <<< "$current"
+
+          # Bump patch version
+          new_patch=$((patch + 1))
+          new_version="${major}.${minor}.${new_patch}"
+          echo "New version: $new_version"
+
+          # Update flake.nix
+          sed -i "s/version = \"$current\"/version = \"$new_version\"/" flake.nix
+
+          # Configure git
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Commit and push
+          git add flake.nix
+          git commit -m "Bump intent-classifier version to $new_version [skip ci]"
+          git push
