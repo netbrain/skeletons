@@ -81,11 +81,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1762685788,
-        "narHash": "sha256-+wsXhEZUJ7mGAApQNiwOu21HO2VB3oYWpDuTVPmrg9Y=",
+        "lastModified": 1762685899,
+        "narHash": "sha256-qnd5R4XVz17w4v5gHj6AP+eI0JfZF3rEes47QA10l8I=",
         "owner": "netbrain",
         "repo": "skeletons",
-        "rev": "2e2b4e3e8a11da98c72e682680ce96bd184ac738",
+        "rev": "c986091a388086a29ac6f5b7fb38b1f1b9cf6a9b",
         "type": "github"
       },
       "original": {
