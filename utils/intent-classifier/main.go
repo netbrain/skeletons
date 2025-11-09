@@ -107,7 +107,7 @@ func main() {
 	// Define flags
 	prompt := flag.String("prompt", "", "User prompt to match against (required)")
 	embed := flag.String("embed", "", "File or directory path to search and match (required)")
-	threshold := flag.Float64("threshold", 0.4, "Similarity threshold (0.0-1.0)")
+	threshold := flag.Float64("threshold", 0.2, "Similarity threshold (0.0-1.0)")
 	embeddingModel := flag.String("embedding-model", "https://huggingface.co/second-state/All-MiniLM-L6-v2-Embedding-GGUF/resolve/main/all-MiniLM-L6-v2-Q5_K_M.gguf", "Embedding model URL or path")
 	libPath := flag.String("lib", "", "llama.cpp library path (auto-detect if empty)")
 	processor := flag.String("processor", "cpu", "Processor type: cpu, cuda, vulkan, metal")
