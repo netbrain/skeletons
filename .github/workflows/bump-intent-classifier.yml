@@ -41,7 +41,7 @@ jobs:
         if: steps.check.outputs.skip == 'false'
         run: |
           # Extract current version
-          current=$(grep -oP 'version = "\K[0-9.]+' flake.nix | head -1)
+          current=$(grep -oP 'intentClassifierVersion = "\K[0-9.]+' flake.nix)
           echo "Current version: $current"
 
           # Parse version (assuming semantic versioning)
@@ -53,7 +53,7 @@ jobs:
           echo "New version: $new_version"
 
           # Update flake.nix
-          sed -i "s/version = \"$current\"/version = \"$new_version\"/" flake.nix
+          sed -i "s/intentClassifierVersion = \"$current\"/intentClassifierVersion = \"$new_version\"/" flake.nix
 
           # Configure git
           git config user.name "github-actions[bot]"
