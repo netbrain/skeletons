@@ -12,6 +12,7 @@
         pkgs = nixpkgs.legacyPackages.${system};
 
         # Build intent-classifier from GitHub
+        # Always pulls latest from main branch
         intent-classifier = pkgs.buildGoModule {
           pname = "intent-classifier";
           version = "0.1.0";
@@ -19,8 +20,8 @@
           src = pkgs.fetchFromGitHub {
             owner = "netbrain";
             repo = "skeletons";
-            rev = "5cbc29cc08aa97f9a2c2666b16f92c198c8e9d06";
-            hash = "sha256-zJrHRFtXM2UOVZ6ak0EY0k9+vbH5MsihfqkUwgF4Low=";
+            rev = "main";
+            hash = "sha256-BcxmPrZHhnZjarSnrN51bLiqF8XVxAXWC+5s+oKpLnM=";
           };
 
           sourceRoot = "source/utils/intent-classifier";
