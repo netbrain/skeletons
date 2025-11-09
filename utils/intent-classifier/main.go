@@ -130,7 +130,7 @@ func main() {
 		fmt.Fprintln(os.Stderr, "        File or directory to embed and match")
 		fmt.Fprintln(os.Stderr, "\nOptional flags:")
 		fmt.Fprintln(os.Stderr, "  -threshold float")
-		fmt.Fprintln(os.Stderr, "        Similarity threshold (default: 0.4)")
+		fmt.Fprintln(os.Stderr, "        Similarity threshold (default: 0.2)")
 		fmt.Fprintln(os.Stderr, "  -output-type string")
 		fmt.Fprintln(os.Stderr, "        Output type: auto, skills, or agents (default: auto)")
 		fmt.Fprintln(os.Stderr, "  -embedding-model string")
