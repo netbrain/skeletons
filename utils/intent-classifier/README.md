@@ -186,7 +186,7 @@ This searches both `testdata/skills/` and `testdata/agents/` and displays both i
 - `--embed`: File or directory to embed and match
 
 **Optional:**
-- `--threshold`: Similarity threshold (0.0-1.0, default: `0.2`)
+- `--threshold`: Similarity threshold (0.0-1.0, default: `0.2`, lower values match more files)
 - `--output-type`: Force output type: `auto`, `skills`, or `agents` (default: `auto` - auto-detects from directory structure)
 - `--embedding-model`: Embedding model URL or local path (default: all-MiniLM-L6-v2)
 - `--lib`: Path to llama.cpp library directory (auto-download if empty)
