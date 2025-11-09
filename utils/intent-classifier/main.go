@@ -12,6 +12,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"strconv"
 	"strings"
 	"unicode"
 
@@ -113,7 +114,7 @@ func main() {
 	flag.BoolVar(&showVersion, "v", false, "Show version and exit (shorthand)")
 	prompt := flag.String("prompt", "", "User prompt to match against (required)")
 	embed := flag.String("embed", "", "File or directory path to search and match (required)")
-	threshold := flag.Float64("threshold", 0.2, "Similarity threshold (0.0-1.0, lower = more matches)")
+	threshold := flag.Float64("threshold", 0.2, "Similarity threshold (0.0-1.0, lower = more matches, env: IC_THRESHOLD)")
 	embeddingModel := flag.String("embedding-model", "https://huggingface.co/second-state/All-MiniLM-L6-v2-Embedding-GGUF/resolve/main/all-MiniLM-L6-v2-Q5_K_M.gguf", "Embedding model URL or path")
 	libPath := flag.String("lib", "", "llama.cpp library path (auto-detect if empty)")
 	processor := flag.String("processor", "cpu", "Processor type: cpu, cuda, vulkan, metal (default: cpu)")
@@ -130,7 +131,7 @@ func main() {
 		fmt.Fprintln(os.Stderr, "        File or directory to embed and match")
 		fmt.Fprintln(os.Stderr, "\nOptional flags:")
 		fmt.Fprintln(os.Stderr, "  -threshold float")
-		fmt.Fprintln(os.Stderr, "        Similarity threshold (default: 0.2)")
+		fmt.Fprintln(os.Stderr, "        Similarity threshold (default: 0.2, env: IC_THRESHOLD)")
 		fmt.Fprintln(os.Stderr, "  -output-type string")
 		fmt.Fprintln(os.Stderr, "        Output type: auto, skills, or agents (default: auto)")
 		fmt.Fprintln(os.Stderr, "  -embedding-model string")
@@ -148,6 +149,23 @@ func main() {
 	if showVersion {
 		fmt.Printf("intent-classifier version %s\n", version)
 		os.Exit(0)
+	}
+
+	// Handle threshold precedence: FLAG -> ENV -> DEFAULT
+	thresholdFlagSet := false
+	flag.Visit(func(f *flag.Flag) {
+		if f.Name == "threshold" {
+			thresholdFlagSet = true
+		}
+	})
+	if !thresholdFlagSet {
+		if envThreshold := os.Getenv("IC_THRESHOLD"); envThreshold != "" {
+			if val, err := strconv.ParseFloat(envThreshold, 64); err == nil {
+				*threshold = val
+			} else {
+				fmt.Fprintf(os.Stderr, "Warning: Invalid IC_THRESHOLD env var '%s', using default\n", envThreshold)
+			}
+		}
 	}
 
 	// Validate required flags
