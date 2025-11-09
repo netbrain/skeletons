@@ -44,7 +44,7 @@
 
         intent-classifier = pkgs.buildGoModule {
           pname = "intent-classifier";
-          version = "0.2.0";
+          version = "0.2.1";
 
           src = ./utils/intent-classifier;
 
