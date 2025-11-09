@@ -42,9 +42,11 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
 
+        intentClassifierVersion = "0.2.1";
+
         intent-classifier = pkgs.buildGoModule {
           pname = "intent-classifier";
-          version = "0.2.1";
+          version = intentClassifierVersion;
 
           src = ./utils/intent-classifier;
 
@@ -55,7 +57,7 @@
           nativeBuildInputs = [ pkgs.makeWrapper ];
 
           # Inject version at build time to bust Nix cache
-          ldflags = [ "-X main.version=${version}" ];
+          ldflags = [ "-X main.version=${intentClassifierVersion}" ];
 
           doCheck = false;
 
