@@ -51,7 +51,9 @@ my-project/
 
 ### 3. Format Your Files
 
-Each file should have YAML frontmatter:
+**Requirements:**
+- Files must be **`.md` (Markdown)** extension
+- Files must have **valid YAML frontmatter** with `name:` field
 
 ```markdown
 ---
@@ -63,9 +65,11 @@ Expert Python programming assistance including frameworks and best practices.
 ```
 
 **Frontmatter fields:**
-- `name:` - Identifier (defaults to file path if omitted)
-- `priority:` - `critical`, `high`, `medium` (default), or `low`
-- `type:` - `skill` or `agent` (auto-detected from directory if omitted)
+- `name:` - **Required** - Skill/agent identifier
+- `priority:` - Optional - `critical`, `high`, `medium` (default), or `low`
+- `type:` - Optional - `skill` or `agent` (auto-detected from directory if omitted)
+
+**Note:** Files without `.md` extension or valid frontmatter are silently skipped (e.g., `.json`, `.yaml`, config files)
 
 ### 4. Run the Classifier
 
@@ -305,22 +309,30 @@ ACTION: Use @python-specialist when responding
 
 ## File Format
 
-Files can optionally have YAML frontmatter:
+Files **must** be `.md` (Markdown) and **must** have valid YAML frontmatter:
 
 ```markdown
 ---
 name: foo
-description: Handles foo operations
 priority: high
+type: skill
 ---
 
 # Content here...
+
+Handles foo operations with advanced features.
 ```
 
 **Frontmatter fields:**
-- `name:` - Skill identifier (defaults to absolute file path if not specified)
-- `priority:` - Priority level: `critical`, `high`, `medium`, `low` (defaults to `medium`)
-- `description:` - Skill description (not currently used by matcher)
+- `name:` - **Required** - Skill/agent identifier
+- `priority:` - Optional - Priority level: `critical`, `high`, `medium`, `low` (defaults to `medium`)
+- `type:` - Optional - `skill` or `agent` (auto-detected from `/skills/` or `/agents/` directory if omitted)
+
+**Validation:**
+- Files without `.md` extension are skipped
+- Files without frontmatter are skipped
+- Files without `name:` field are skipped
+- This prevents config files (`.json`, `.yaml`) from being processed
 
 ## Model Information
 

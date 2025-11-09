@@ -266,6 +266,48 @@ func getEmbedding(model llama.Model, lctx llama.Context, text string) ([]float32
 	return normalized, nil
 }
 
+// isValidSkillFile checks if file should be processed
+func isValidSkillFile(path string, content string) bool {
+	// Must be .md file
+	if !strings.HasSuffix(strings.ToLower(path), ".md") {
+		return false
+	}
+
+	// Must have valid frontmatter with name field
+	return hasValidFrontmatter(content)
+}
+
+// hasValidFrontmatter checks if content has YAML frontmatter with required fields
+func hasValidFrontmatter(content string) bool {
+	lines := strings.Split(content, "\n")
+	if len(lines) < 3 || !strings.HasPrefix(lines[0], "---") {
+		return false
+	}
+
+	// Look for closing --- and name: field
+	foundClosing := false
+	foundName := false
+
+	for i := 1; i < len(lines); i++ {
+		line := strings.TrimSpace(lines[i])
+
+		if line == "---" {
+			foundClosing = true
+			break
+		}
+
+		if strings.HasPrefix(line, "name:") {
+			nameValue := strings.TrimSpace(strings.TrimPrefix(line, "name:"))
+			nameValue = strings.Trim(nameValue, "\"'")
+			if nameValue != "" {
+				foundName = true
+			}
+		}
+	}
+
+	return foundClosing && foundName
+}
+
 // loadItems reads file or directory and loads content
 func loadItems(path string) ([]Item, error) {
 	var items []Item
@@ -282,11 +324,16 @@ func loadItems(path string) ([]Item, error) {
 			return nil, err
 		}
 
-		name, priority, itemType := extractMetadata(string(content), path)
+		contentStr := string(content)
+		if !isValidSkillFile(path, contentStr) {
+			return nil, fmt.Errorf("file must be .md with valid frontmatter (name field required)")
+		}
+
+		name, priority, itemType := extractMetadata(contentStr, path)
 		items = append(items, Item{
 			Name:     name,
 			Path:     path,
-			Content:  string(content),
+			Content:  contentStr,
 			Priority: priority,
 			Type:     itemType,
 		})
@@ -309,13 +356,20 @@ func loadItems(path string) ([]Item, error) {
 			return nil // Continue walking
 		}
 
+		contentStr := string(content)
+
+		// Skip files that don't meet validation criteria
+		if !isValidSkillFile(p, contentStr) {
+			return nil // Skip silently
+		}
+
 		// Extract name, priority, and type from frontmatter
-		name, priority, itemType := extractMetadata(string(content), p)
+		name, priority, itemType := extractMetadata(contentStr, p)
 
 		items = append(items, Item{
 			Name:     name,
 			Path:     p,
-			Content:  string(content),
+			Content:  contentStr,
 			Priority: priority,
 			Type:     itemType,
 		})

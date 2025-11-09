@@ -146,6 +146,98 @@ func TestPreprocessText(t *testing.T) {
 	}
 }
 
+func TestHasValidFrontmatter(t *testing.T) {
+	tests := []struct {
+		name     string
+		content  string
+		expected bool
+	}{
+		{
+			name:     "valid frontmatter with name",
+			content:  "---\nname: test-skill\npriority: high\n---\nContent",
+			expected: true,
+		},
+		{
+			name:     "no frontmatter",
+			content:  "Just content without frontmatter",
+			expected: false,
+		},
+		{
+			name:     "frontmatter without name",
+			content:  "---\npriority: high\n---\nContent",
+			expected: false,
+		},
+		{
+			name:     "empty name field",
+			content:  "---\nname: \npriority: high\n---\nContent",
+			expected: false,
+		},
+		{
+			name:     "no closing frontmatter",
+			content:  "---\nname: test\npriority: high\nContent",
+			expected: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := hasValidFrontmatter(tt.content)
+			if result != tt.expected {
+				t.Errorf("hasValidFrontmatter() = %v, expected %v", result, tt.expected)
+			}
+		})
+	}
+}
+
+func TestIsValidSkillFile(t *testing.T) {
+	tests := []struct {
+		name     string
+		path     string
+		content  string
+		expected bool
+	}{
+		{
+			name:     "valid .md with frontmatter",
+			path:     "/path/to/skill.md",
+			content:  "---\nname: test\n---\nContent",
+			expected: true,
+		},
+		{
+			name:     "not .md extension",
+			path:     "/path/to/skill.txt",
+			content:  "---\nname: test\n---\nContent",
+			expected: false,
+		},
+		{
+			name:     ".md without frontmatter",
+			path:     "/path/to/skill.md",
+			content:  "Just content",
+			expected: false,
+		},
+		{
+			name:     ".json file",
+			path:     "/path/to/settings.json",
+			content:  "{}",
+			expected: false,
+		},
+		{
+			name:     "uppercase .MD extension",
+			path:     "/path/to/skill.MD",
+			content:  "---\nname: test\n---\nContent",
+			expected: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := isValidSkillFile(tt.path, tt.content)
+			if result != tt.expected {
+				t.Errorf("isValidSkillFile() = %v, expected %v", result, tt.expected)
+			}
+		})
+	}
+}
+
 func TestExtractMetadata(t *testing.T) {
 	tests := []struct {
 		name             string
