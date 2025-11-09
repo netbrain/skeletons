@@ -108,6 +108,7 @@ func removeStopWords(text string) string {
 
 func main() {
 	// Define flags
+	showVersion := flag.Bool("version", false, "Show version and exit")
 	prompt := flag.String("prompt", "", "User prompt to match against (required)")
 	embed := flag.String("embed", "", "File or directory path to search and match (required)")
 	threshold := flag.Float64("threshold", 0.2, "Similarity threshold (0.0-1.0, lower = more matches)")
@@ -140,6 +141,12 @@ func main() {
 	}
 
 	flag.Parse()
+
+	// Handle version flag
+	if *showVersion {
+		fmt.Printf("intent-classifier version %s\n", version)
+		os.Exit(0)
+	}
 
 	// Validate required flags
 	if *prompt == "" || *embed == "" {
