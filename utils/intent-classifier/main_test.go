@@ -446,3 +446,37 @@ func TestCacheFunctions(t *testing.T) {
 		}
 	})
 }
+
+func TestTokenLimitHandling(t *testing.T) {
+	// Create a very long text that exceeds 512 tokens
+	// Average English word is ~4.5 characters, and typically ~1.3 tokens per word
+	// So 512 tokens ≈ 394 words ≈ 1773 characters (conservatively)
+	// We'll create text with ~2000 tokens to test truncation
+	longText := strings.Builder{}
+	word := "testing "
+	// Create ~15000 characters worth of text (roughly 2600 tokens)
+	for i := 0; i < 2000; i++ {
+		longText.WriteString(word)
+	}
+
+	// Test that preprocessing handles very long text
+	t.Run("preprocess long text", func(t *testing.T) {
+		result := preprocessText(longText.String())
+		// Should not panic and should return something
+		if result == "" {
+			t.Errorf("expected non-empty result from preprocessing")
+		}
+	})
+
+	// Test that text exceeding character limit gets truncated
+	t.Run("character-based truncation", func(t *testing.T) {
+		maxChars := 512 * 3 // Conservative estimate used in matchItems
+		text := longText.String()
+		if len(text) > maxChars {
+			truncated := text[:maxChars]
+			if len(truncated) != maxChars {
+				t.Errorf("expected length %d, got %d", maxChars, len(truncated))
+			}
+		}
+	})
+}

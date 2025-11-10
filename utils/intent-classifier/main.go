@@ -226,6 +226,7 @@ func main() {
 	ctxParams := llama.ContextDefaultParams()
 	ctxParams.NCtx = 512
 	ctxParams.NBatch = 512
+	ctxParams.NUbatch = 512 // Set micro-batch size to match batch size
 	ctxParams.Embeddings = 1 // Enable embeddings mode
 
 	lctx := llama.InitFromModel(model, ctxParams)
@@ -261,12 +262,21 @@ func main() {
 
 // matchWithLLMAndTemplate uses LLM to analyze files and generate template output
 func getEmbedding(model llama.Model, lctx llama.Context, text string) ([]float32, error) {
+	// Get max context size and reserve room for special tokens
+	maxTokens := int(llama.NCtx(lctx)) - 10
+
 	// Tokenize
 	vocab := llama.ModelGetVocab(model)
 	count := llama.Tokenize(vocab, text, nil, true, true)
 	if count <= 0 {
 		return nil, fmt.Errorf("tokenization returned no tokens")
 	}
+
+	// Truncate if exceeds max tokens
+	if count > int32(maxTokens) {
+		count = int32(maxTokens)
+	}
+
 	tokens := make([]llama.Token, count)
 	llama.Tokenize(vocab, text, tokens, true, true)
 
@@ -491,6 +501,7 @@ func matchItems(model llama.Model, lctx llama.Context, promptEmbed []float32, it
 	ctxParams := llama.ContextDefaultParams()
 	ctxParams.NCtx = 512
 	ctxParams.NBatch = 512
+	ctxParams.NUbatch = 512
 	ctxParams.Embeddings = 1
 
 	for _, item := range items {
