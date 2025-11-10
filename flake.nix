@@ -42,7 +42,7 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
 
-        intentClassifierVersion = "0.2.5";
+        intentClassifierVersion = "0.2.6";
 
         intent-classifier = pkgs.buildGoModule {
           pname = "intent-classifier";
