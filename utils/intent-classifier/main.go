@@ -176,13 +176,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Resolve embedding model to GGUF file path
-	embeddingModelPath := resolveModel(*embeddingModel, "embedding")
-
-	// Auto-download llama.cpp if not found
+	// Auto-download llama.cpp if not found (must happen before resolving models)
 	if *libPath == "" {
 		*libPath = ensureLlamaLib(*processor)
 	}
+
+	// Resolve embedding model to GGUF file path
+	embeddingModelPath := resolveModel(*embeddingModel, "embedding")
 
 	// Load llama.cpp library
 	if err := llama.Load(*libPath); err != nil {
@@ -790,6 +790,15 @@ func resolveModel(modelSpec string, modelType string) string {
 		os.Exit(1)
 	}
 
+	// Verify model file exists and has non-zero size
+	if stat, err := os.Stat(modelPath); err != nil {
+		fmt.Fprintf(os.Stderr, "❌ Model file not found after download: %v\n", err)
+		os.Exit(1)
+	} else if stat.Size() == 0 {
+		fmt.Fprintf(os.Stderr, "❌ Downloaded model file is empty\n")
+		os.Exit(1)
+	}
+
 	fmt.Println("✅ Model downloaded successfully")
 	return modelPath
 }
@@ -817,7 +826,12 @@ func downloadFile(url string, filepath string) error {
 
 	// Write the body to file
 	_, err = io.Copy(out, resp.Body)
-	return err
+	if err != nil {
+		return err
+	}
+
+	// Ensure data is flushed to disk before returning
+	return out.Sync()
 }
 
 // ensureLlamaLib ensures llama.cpp library is available
@@ -849,6 +863,12 @@ func ensureLlamaLib(processor string) string {
 	fmt.Printf("📦 Installing llama.cpp version %s (%s)...\n", version, processor)
 	if err := download.Get(runtime.GOOS, processor, version, cacheDir); err != nil {
 		fmt.Fprintf(os.Stderr, "❌ Failed to download llama.cpp: %v\n", err)
+		os.Exit(1)
+	}
+
+	// Verify library file exists and is readable
+	if _, err := os.Stat(libPath); err != nil {
+		fmt.Fprintf(os.Stderr, "❌ Library file not found after download: %v\n", err)
 		os.Exit(1)
 	}
 
