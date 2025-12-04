@@ -21,7 +21,7 @@ import (
 )
 
 // Version is injected at build time via ldflags
-var version = "0.2.7"
+var version = "0.2.8"
 
 // Item represents a file with its content for matching
 type Item struct {
