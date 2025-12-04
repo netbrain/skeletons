@@ -866,6 +866,12 @@ func ensureLlamaLib(processor string) string {
 		os.Exit(1)
 	}
 
+	// Fix broken symlinks (tar extraction sometimes creates text files instead of symlinks)
+	if err := fixBrokenSymlinks(cacheDir); err != nil {
+		// Non-fatal - warn but continue
+		fmt.Fprintf(os.Stderr, "⚠️  Warning: Could not fix symlinks: %v\n", err)
+	}
+
 	// Verify library file exists and is readable
 	if _, err := os.Stat(libPath); err != nil {
 		fmt.Fprintf(os.Stderr, "❌ Library file not found after download: %v\n", err)
@@ -874,6 +880,55 @@ func ensureLlamaLib(processor string) string {
 
 	fmt.Println("✅ llama.cpp library installed successfully")
 	return cacheDir
+}
+
+// fixBrokenSymlinks repairs symlinks that were extracted as text files
+func fixBrokenSymlinks(dir string) error {
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return err
+	}
+
+	for _, entry := range entries {
+		// Only check .so* files
+		if !strings.Contains(entry.Name(), ".so") {
+			continue
+		}
+
+		path := filepath.Join(dir, entry.Name())
+		info, err := entry.Info()
+		if err != nil {
+			continue
+		}
+
+		// Skip if already a symlink or too large
+		if info.Mode()&os.ModeSymlink != 0 || info.Size() >= 100 {
+			continue
+		}
+
+		// Read content - should be the symlink target
+		content, err := os.ReadFile(path)
+		if err != nil {
+			continue
+		}
+
+		target := strings.TrimSpace(string(content))
+		// Validate: single line, target exists
+		if strings.Contains(target, "\n") || target == "" {
+			continue
+		}
+
+		targetPath := filepath.Join(dir, target)
+		if _, err := os.Stat(targetPath); err != nil {
+			continue
+		}
+
+		// Replace text file with symlink
+		os.Remove(path)
+		os.Symlink(target, path)
+	}
+
+	return nil
 }
 
 // getCacheDir returns a cross-platform cache directory
