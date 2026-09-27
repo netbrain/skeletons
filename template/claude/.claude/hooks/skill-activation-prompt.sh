@@ -19,16 +19,7 @@ if [[ -z "$project_dir" ]]; then
     project_dir=$(echo "$input" | grep -oP '"cwd"\s*:\s*"\K[^"]+' 2>/dev/null || pwd)
 fi
 
-# Check if intent-classifier is available on PATH
-if command -v intent-classifier &> /dev/null; then
-    # Use semantic intent classifier
-    intent-classifier \
-        --prompt "$prompt" \
-        --embed "$project_dir/.claude" 2>&1
-    exit 0
-fi
-
-# Fallback to keyword/regex matching
+# Use keyword/regex matching
 prompt=$(echo "$prompt" | tr '[:upper:]' '[:lower:]')
 
 # Arrays to hold matched skills by priority
