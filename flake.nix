@@ -41,46 +41,8 @@
     } // flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
-
-        intentClassifierVersion = "0.2.8";
-
-        intent-classifier = pkgs.buildGoModule {
-          pname = "intent-classifier";
-          version = intentClassifierVersion;
-
-          src = ./utils/intent-classifier;
-
-          vendorHash = "sha256-Ks1NEdhqgDRUgN9t3rAv71EmZtxHqUnXP+V+ewRBvoU=";
-
-          buildInputs = [ pkgs.libffi ];
-
-          nativeBuildInputs = [ pkgs.makeWrapper ];
-
-          # Strip debug symbols and inject version to bust Nix cache
-          ldflags = [
-            "-s"
-            "-w"
-            "-X main.version=${intentClassifierVersion}"
-          ];
-
-          doCheck = false;
-
-          preBuild = ''
-            export LD_LIBRARY_PATH=${pkgs.lib.makeLibraryPath [ pkgs.libffi pkgs.stdenv.cc.cc.lib ]}
-          '';
-
-          postInstall = ''
-            wrapProgram $out/bin/intent-classifier \
-              --prefix LD_LIBRARY_PATH : ${pkgs.lib.makeLibraryPath [ pkgs.libffi pkgs.stdenv.cc.cc.lib ]}
-          '';
-        };
       in
       {
-        packages = {
-          inherit intent-classifier;
-          default = intent-classifier;
-        };
-
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
             # Go development tools

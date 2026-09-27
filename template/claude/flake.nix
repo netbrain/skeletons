@@ -4,10 +4,9 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    skeletons.url = "github:netbrain/skeletons";
   };
 
-  outputs = { self, nixpkgs, flake-utils, skeletons }:
+  outputs = { self, nixpkgs, flake-utils }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
@@ -15,7 +14,6 @@
       {
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
-            skeletons.packages.${system}.intent-classifier
             # Common development tools
             # Add more tools based on your stack:
             # go, gopls, gotools (for Go)
